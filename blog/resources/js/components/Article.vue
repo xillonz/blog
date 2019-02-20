@@ -1,15 +1,13 @@
 <template>
-<div class="articles">
-    <p>Article List</p>
-
+<div class="article">
     <div class="loading" v-if="loading">Loading</div>
     <div class="error" v-if="error">{{ error }}</div>
-    <ul v-if="articles">
-        <li v-for="(article) in articles" v-bind:key="article._id">
-            <router-link :to="{ name: 'articles.show', params: {id: article._id} }">{{ article.title }}</router-link>
+    <div v-if="article">
+        <h2>{{ article.title }}</h2>
+        <div>
             {{ article.content }}
-        </li>
-    </ul>
+        </div>
+    </div> 
 </div>
 </template>
 
@@ -19,7 +17,7 @@ export default {
     data() {
         return {
             loading: false,
-            articles: null,
+            article: null,
             error: null,
         };
     },
@@ -28,14 +26,14 @@ export default {
     },
     methods: {
         fetchData() {
-            this.error = this.articles = null;
+            this.error = this.article = null;
             this.loading = true;
             axios
-                .get('/api/articles')
+                .get('/api/articles/'+this.$route.params.id)
                 .then(response => {
                     console.log(response);
                     this.loading = false;
-                    this.articles = response.data.articles;
+                    this.article = response.data.article;
                 }).catch(error => {
                     this.loading = false;
                     this.error = error.response.data.message || error.message;

@@ -17,6 +17,10 @@ use Illuminate\Http\Request;
 //     return $request->user();
 // });
 
+Route::post('login', 'UserController@login');
+Route::post('logout', 'UserController@logout');
+Route::get('checkLogin', 'UserController@checkLogin');
+
 // Public routes
 Route::resource('articles', 'ArticleController')->only([
     'index', 'show'
