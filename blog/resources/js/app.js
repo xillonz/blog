@@ -1,11 +1,12 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import store from './store/store'
+import wysiwyg from "vue-wysiwyg";
 
+Vue.use(wysiwyg, {});
 Vue.use(VueRouter)
 
 import App from './components/App'
-import Home from './components/Home'
 import Login from './components/Login'
 import Articles from './components/Articles'
 import Article from './components/Article'
@@ -16,12 +17,7 @@ const router = new VueRouter({
         {
             path: '/',
             name: 'home',
-            component: Home
-        },
-        {
-            path: '/articles',
-            name: 'articles.index',
-            component: Articles,
+            component: Articles
         },
         {
             path: '/articles/:id',

@@ -44,7 +44,7 @@ export default {
                 .then(response => {
                     console.log(response);
                     this.setLoggedIn(true);
-                    router.go(-1);
+                    this.$router.push('/')
                 }).catch(error => {
                     console.log(error);
                     this.submitted = false;

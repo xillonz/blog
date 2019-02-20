@@ -1,5 +1,6 @@
 <template>
 <div class="articles">
+    <router-link v-if="loggedIn" :to="{ name: 'articles.show', params: {id: 'new'} }">New Article</router-link>
     <p>Article List</p>
 
     <div class="loading" v-if="loading">Loading</div>
@@ -15,6 +16,7 @@
 
 <script>
 import axios from 'axios';
+import { mapState } from 'vuex'
 export default {
     data() {
         return {
@@ -22,6 +24,11 @@ export default {
             articles: null,
             error: null,
         };
+    },
+    computed: {
+        ...mapState([
+            'loggedIn'
+        ]),
     },
     created() {
         this.fetchData();

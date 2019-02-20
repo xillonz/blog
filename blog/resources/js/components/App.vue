@@ -4,7 +4,6 @@
 
         <p>
             <router-link :to="{ name: 'home' }">Home</router-link>
-            <router-link :to="{ name: 'articles.index' }">Articles</router-link>
             <router-link v-if="!loggedIn" :to="{ name: 'login' }">Log In</router-link>
             <button v-if="loggedIn" v-on:click="logout">Log Out</button>
         </p>
@@ -23,7 +22,7 @@
                 'loggedIn'
             ]),
         },
-        mounted(){
+        created(){
             axios
                 .get('/api/checkLogin')
                 .then(response => {
