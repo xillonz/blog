@@ -28,7 +28,7 @@ class ArticleController extends Controller
      */
     public function create()
     {
-        //
+        
     }
 
     /**
@@ -39,7 +39,15 @@ class ArticleController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $inputArticle = $request->input('article');
+        $article = new Article;
+        $article->title = $inputArticle['title'];
+        $article->content = $inputArticle['content'];
+        $article->save();
+
+        return response()->json([
+            'article' => $article
+        ], 200);
     }
 
     /**
@@ -75,7 +83,14 @@ class ArticleController extends Controller
      */
     public function update(Request $request, Article $article)
     {
-        //
+        $inputArticle = $request->input('article');
+        $article->title = $inputArticle['title'];
+        $article->content = $inputArticle['content'];
+        $article->save();
+
+        return response()->json([
+            'article' => $article
+        ], 200);
     }
 
     /**
@@ -86,6 +101,8 @@ class ArticleController extends Controller
      */
     public function destroy(Article $article)
     {
-        //
+        $article->delete();
+
+        return response()->json(['success'], 200);
     }
 }

@@ -11,11 +11,9 @@
     
     <div v-if="!editing">
         <h2>{{ article.title }}</h2>
-        <article>
-            {{ article.content }}
-        </article>
+        <article v-html="article.content"></article>
     </div>
-    <div v-if="editing && article">
+    <div v-else>
         <input v-model="article.title" type="text">
         <wysiwyg v-if="editing" v-model="article.content" />
     </div> 
@@ -29,7 +27,10 @@ export default {
     data() {
         return {
             loading: false,
-            article: null,
+            article: {
+                title: null,
+                content: null
+            },
             error: null,
             editing: false,
         };
@@ -54,14 +55,33 @@ export default {
                 this.editing = !this.editing;
             }
         },
-        toggleEdit() {
-            this.editing = !this.editing;
+        saveEdit() {
+            let method = (this.$route.params.id === 'new') ? 'POST' : 'PUT';
+            let url = (this.$route.params.id === 'new') ? '/api/articles' : '/api/articles/'+this.$route.params.id;
+            axios({
+                method: method,
+                url: url,
+                data: {
+                    article: this.article
+                }
+            }).then(response => {
+                console.log(response);
+                this.editing = false;
+            }).catch(error => {
+                this.error = error.response.data.message || error.message;
+            });
         },
-        toggleEdit() {
-            this.editing = !this.editing;
+        deleteArticle() {
+             axios
+                .delete('/api/articles/'+this.$route.params.id)
+                .then(response => {
+                    this.$router.push('/');
+                }).catch(error => {
+                    this.error = error.response.data.message || error.message;
+                });
         },
         fetchData() {
-            this.error = this.article = null;
+            this.error = null;
             this.loading = true;
 
             if(this.$route.params.id === 'new'){

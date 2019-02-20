@@ -1829,14 +1829,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
-var _methods;
-
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-//
-//
 //
 //
 //
@@ -1865,7 +1861,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   data: function data() {
     return {
       loading: false,
-      article: null,
+      article: {
+        title: null,
+        content: null
+      },
       error: null,
       editing: false
     };
@@ -1874,7 +1873,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   created: function created() {
     this.fetchData();
   },
-  methods: (_methods = {
+  methods: {
     toggleEdit: function toggleEdit() {
       this.editing = !this.editing;
     },
@@ -1885,31 +1884,55 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         this.fetchData();
         this.editing = !this.editing;
       }
-    }
-  }, _defineProperty(_methods, "toggleEdit", function toggleEdit() {
-    this.editing = !this.editing;
-  }), _defineProperty(_methods, "toggleEdit", function toggleEdit() {
-    this.editing = !this.editing;
-  }), _defineProperty(_methods, "fetchData", function fetchData() {
-    var _this = this;
+    },
+    saveEdit: function saveEdit() {
+      var _this = this;
 
-    this.error = this.article = null;
-    this.loading = true;
-
-    if (this.$route.params.id === 'new') {
-      this.loading = false;
-      this.editing = true;
-    } else {
-      axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/articles/' + this.$route.params.id).then(function (response) {
+      var method = this.$route.params.id === 'new' ? 'POST' : 'PUT';
+      var url = this.$route.params.id === 'new' ? '/api/articles' : '/api/articles/' + this.$route.params.id;
+      axios__WEBPACK_IMPORTED_MODULE_0___default()({
+        method: method,
+        url: url,
+        data: {
+          article: this.article
+        }
+      }).then(function (response) {
         console.log(response);
-        _this.loading = false;
-        _this.article = response.data.article;
+        _this.editing = false;
       }).catch(function (error) {
-        _this.loading = false;
         _this.error = error.response.data.message || error.message;
       });
+    },
+    deleteArticle: function deleteArticle() {
+      var _this2 = this;
+
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.delete('/api/articles/' + this.$route.params.id).then(function (response) {
+        _this2.$router.push('/');
+      }).catch(function (error) {
+        _this2.error = error.response.data.message || error.message;
+      });
+    },
+    fetchData: function fetchData() {
+      var _this3 = this;
+
+      this.error = null;
+      this.loading = true;
+
+      if (this.$route.params.id === 'new') {
+        this.loading = false;
+        this.editing = true;
+      } else {
+        axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/articles/' + this.$route.params.id).then(function (response) {
+          console.log(response);
+          _this3.loading = false;
+          _this3.article = response.data.article;
+        }).catch(function (error) {
+          _this3.loading = false;
+          _this3.error = error.response.data.message || error.message;
+        });
+      }
     }
-  }), _methods)
+  }
 });
 
 /***/ }),
@@ -2657,16 +2680,11 @@ var render = function() {
       ? _c("div", [
           _c("h2", [_vm._v(_vm._s(_vm.article.title))]),
           _vm._v(" "),
-          _c("article", [
-            _vm._v(
-              "\r\n            " + _vm._s(_vm.article.content) + "\r\n        "
-            )
-          ])
+          _c("article", {
+            domProps: { innerHTML: _vm._s(_vm.article.content) }
+          })
         ])
-      : _vm._e(),
-    _vm._v(" "),
-    _vm.editing && _vm.article
-      ? _c(
+      : _c(
           "div",
           [
             _c("input", {
@@ -2704,7 +2722,6 @@ var render = function() {
           ],
           1
         )
-      : _vm._e()
   ])
 }
 var staticRenderFns = []
