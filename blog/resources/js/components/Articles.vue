@@ -6,9 +6,9 @@
     <div class="loading" v-if="loading">Loading</div>
     <div class="error" v-if="error">{{ error }}</div>
     <ul v-if="articles">
-        <li v-for="(article) in articles" v-bind:key="article._id">
+        <li class="article-item" v-for="(article) in articles" v-bind:key="article._id">
             <router-link :to="{ name: 'articles.show', params: {id: article._id} }">{{ article.title }}</router-link>
-            {{ article.content }}
+            <div class="article-preview" v-html="article.content"></div>
         </li>
     </ul>
 </div>

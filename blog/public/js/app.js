@@ -2774,7 +2774,7 @@ var render = function() {
             _vm._l(_vm.articles, function(article) {
               return _c(
                 "li",
-                { key: article._id },
+                { key: article._id, staticClass: "article-item" },
                 [
                   _c(
                     "router-link",
@@ -2788,11 +2788,11 @@ var render = function() {
                     },
                     [_vm._v(_vm._s(article.title))]
                   ),
-                  _vm._v(
-                    "\r\n            " +
-                      _vm._s(article.content) +
-                      "\r\n        "
-                  )
+                  _vm._v(" "),
+                  _c("div", {
+                    staticClass: "article-preview",
+                    domProps: { innerHTML: _vm._s(article.content) }
+                  })
                 ],
                 1
               )
