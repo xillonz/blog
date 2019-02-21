@@ -11116,14 +11116,6 @@ a.text-dark:focus {
   }
 }
 
-.loader {
-  height: 4px;
-  width: 100%;
-  position: relative;
-  overflow: hidden;
-  background-color: #ddd;
-}
-
 @-webkit-keyframes loading {
   from {
     left: -200px;
@@ -11197,6 +11189,7 @@ nav #loading-bar {
   position: absolute;
   top: 100%;
   left: 0;
+  overflow: hidden;
 }
 
 nav #loading-bar.loading:before {

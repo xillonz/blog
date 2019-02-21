@@ -9,17 +9,6 @@
 @import '~bootstrap/scss/bootstrap';
 @import "~vue-wysiwyg/dist/vueWysiwyg.css";
 
-.loader {
-  height: 4px;
-  width: 100%;
-  position: relative;
-  overflow: hidden;
-  background-color: #ddd;
-}
-.loader:before{
-  
-}
-
 @keyframes loading {
     from {left: -200px; width: 30%;}
     50% {width: 30%;}
@@ -47,6 +36,7 @@ nav {
     position: absolute;
     top: 100%;
     left: 0;
+    overflow: hidden;
 
     &.loading:before{      
       display: block;
