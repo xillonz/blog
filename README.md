@@ -1,7 +1,7 @@
-## Blog
-Simple SPA blog in Laravel
+# Blog
+Simple SPA blog in Laravel with Vue.js and MongoDB
 
-# Setup
+## Setup
 
 Run migrations
 
