@@ -9,7 +9,139 @@
 @import '~bootstrap/scss/bootstrap';
 @import "~vue-wysiwyg/dist/vueWysiwyg.css";
 
-.navbar-laravel {
-  background-color: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+.loader {
+  height: 4px;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  background-color: #ddd;
 }
+.loader:before{
+  
+}
+
+@keyframes loading {
+    from {left: -200px; width: 30%;}
+    50% {width: 30%;}
+    70% {width: 70%;}
+    80% { left: 50%;}
+    95% {left: 120%;}
+    to {left: 100%;}
+}
+
+nav {
+  background-color: #fff;;
+  color: #222;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+
+  #loading-bar{
+    content: '';
+    height: 4px;
+    width: 100%;
+    background: rgb(73, 181, 196);
+    position: absolute;
+    top: 100%;
+    left: 0;
+
+    &.loading:before{      
+      display: block;
+      position: absolute;
+      content: "";
+      left: -200px;
+      width: 200px;
+      height: 4px;
+      background-color: #1f96e6;
+      animation: loading 2s linear infinite;      
+    }
+  }
+
+  h1{
+    margin: 0;
+  }
+
+  a, a:hover{
+    color: #222;
+  }
+
+  .log-link{
+    background: none;
+    color: #222;
+    border: none;
+  }
+}
+
+.container{
+  padding-top: 40px;
+
+  .article-list{
+    width: 100%;
+    margin: 0 -10px;
+    
+    .article-link{
+      &:hover{
+        text-decoration: none;
+      }
+
+      .article-card{
+        display: inline-block;
+        padding: 20px;
+        margin: 10px;
+        width: 280px;
+        background: #fff;
+        color: #222;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+        transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+        &:hover{
+          box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+        }
+
+        .article-preview{
+          height: 90px;
+          overflow: hidden;
+
+          img{
+            display: none;
+          }
+        }
+      }
+    }
+  }
+}
+
+.article-head{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.article-controls{
+
+  .btn{
+    margin-left: 10px;
+  }
+  .cancel-btn{
+    background: none;
+    border: none;
+  }
+}
+
+.article-main{
+  background: #fff;
+  padding: 30px;
+  margin: 20px 0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+}
+
+.editr{
+  margin-top: 30px;
+}
+
+.error{
+  color: #e3342f;
+}
+

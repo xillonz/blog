@@ -1,13 +1,11 @@
 <template>
     <div>
-        <h1>Blog</h1>
-
-        <p>
-            <router-link :to="{ name: 'home' }">Home</router-link>
-            <router-link v-if="!loggedIn" :to="{ name: 'login' }">Log In</router-link>
-            <button v-if="loggedIn" v-on:click="logout">Log Out</button>
-        </p>
-
+        <nav>
+            <h1><router-link :to="{ name: 'home' }">Blog</router-link></h1>            
+            <router-link class="log-link" v-if="!loggedIn" :to="{ name: 'login' }">Log In</router-link>
+            <button class="log-link" v-else v-on:click="logout">Log Out</button>
+            <div id="loading-bar"  v-bind:class="{ loading: loading }"></div>          
+        </nav>
         <div class="container">
             <router-view></router-view>
         </div>
@@ -19,7 +17,8 @@
     export default {
         computed: {
             ...mapState([
-                'loggedIn'
+                'loggedIn',
+                'loading'
             ]),
         },
         created(){

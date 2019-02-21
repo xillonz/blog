@@ -33,9 +33,11 @@ export default {
     },
     methods: {    
         ...mapMutations([
-            'setLoggedIn'
+            'setLoggedIn',
+            'setLoading'
         ]),  
         handleSubmit (e) {
+            this.setLoading(true);
             this.submitted = true;  
             const { email, password } = this;
             if (email && password) {                               
@@ -44,10 +46,12 @@ export default {
                 .then(response => {
                     console.log(response);
                     this.setLoggedIn(true);
+                    this.setLoading(false);
                     this.$router.push('/')
                 }).catch(error => {
                     console.log(error);
                     this.submitted = false;
+                    this.setLoading(false);
                 });
             }
         }

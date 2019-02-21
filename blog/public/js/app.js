@@ -1783,12 +1783,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
-//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(['loggedIn'])),
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapState"])(['loggedIn', 'loading'])),
   created: function created() {
     var _this = this;
 
@@ -1855,12 +1853,19 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
-      loading: false,
       article: {
         title: null,
         content: null
@@ -1873,7 +1878,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   created: function created() {
     this.fetchData();
   },
-  methods: {
+  methods: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_1__["mapMutations"])(['setLoading']), {
     toggleEdit: function toggleEdit() {
       this.editing = !this.editing;
     },
@@ -1888,51 +1893,64 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     saveEdit: function saveEdit() {
       var _this = this;
 
+      this.setLoading(true);
       var method = this.$route.params.id === 'new' ? 'POST' : 'PUT';
       var url = this.$route.params.id === 'new' ? '/api/articles' : '/api/articles/' + this.$route.params.id;
       axios__WEBPACK_IMPORTED_MODULE_0___default()({
         method: method,
         url: url,
         data: {
-          article: this.article
+          title: this.article.title,
+          content: this.article.content
         }
       }).then(function (response) {
         console.log(response);
         _this.editing = false;
+
+        _this.setLoading(false);
       }).catch(function (error) {
         _this.error = error.response.data.message || error.message;
+
+        _this.setLoading(false);
       });
     },
     deleteArticle: function deleteArticle() {
       var _this2 = this;
 
+      this.setLoading(true);
       axios__WEBPACK_IMPORTED_MODULE_0___default.a.delete('/api/articles/' + this.$route.params.id).then(function (response) {
+        _this2.setLoading(false);
+
         _this2.$router.push('/');
       }).catch(function (error) {
         _this2.error = error.response.data.message || error.message;
+
+        _this2.setLoading(false);
       });
     },
     fetchData: function fetchData() {
       var _this3 = this;
 
       this.error = null;
-      this.loading = true;
 
       if (this.$route.params.id === 'new') {
-        this.loading = false;
         this.editing = true;
       } else {
+        this.setLoading(true);
         axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/articles/' + this.$route.params.id).then(function (response) {
           console.log(response);
-          _this3.loading = false;
+
+          _this3.setLoading(false);
+
           _this3.article = response.data.article;
         }).catch(function (error) {
-          _this3.loading = false;
+          _this3.setLoading(false);
+
           _this3.error = error.response.data.message || error.message;
         });
       }
     }
-  }
+  })
 });
 
 /***/ }),
@@ -1968,13 +1986,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
-      loading: false,
       articles: null,
       error: null
     };
@@ -1983,22 +1999,25 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   created: function created() {
     this.fetchData();
   },
-  methods: {
+  methods: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_1__["mapMutations"])(['setLoading']), {
     fetchData: function fetchData() {
       var _this = this;
 
       this.error = this.articles = null;
-      this.loading = true;
+      this.setLoading(true);
       axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/articles').then(function (response) {
         console.log(response);
-        _this.loading = false;
+
+        _this.setLoading(false);
+
         _this.articles = response.data.articles;
       }).catch(function (error) {
-        _this.loading = false;
+        _this.setLoading(false);
+
         _this.error = error.response.data.message || error.message;
       });
     }
-  }
+  })
 });
 
 /***/ }),
@@ -2051,10 +2070,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       submitted: false
     };
   },
-  methods: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapMutations"])(['setLoggedIn']), {
+  methods: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapMutations"])(['setLoggedIn', 'setLoading']), {
     handleSubmit: function handleSubmit(e) {
       var _this = this;
 
+      this.setLoading(true);
       this.submitted = true;
       var email = this.email,
           password = this.password;
@@ -2068,10 +2088,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
           _this.setLoggedIn(true);
 
+          _this.setLoading(false);
+
           _this.$router.push('/');
         }).catch(function (error) {
           console.log(error);
           _this.submitted = false;
+
+          _this.setLoading(false);
         });
       }
     }
@@ -2596,24 +2620,35 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", [
-    _c("h1", [_vm._v("Blog")]),
-    _vm._v(" "),
     _c(
-      "p",
+      "nav",
       [
-        _c("router-link", { attrs: { to: { name: "home" } } }, [
-          _vm._v("Home")
-        ]),
+        _c(
+          "h1",
+          [
+            _c("router-link", { attrs: { to: { name: "home" } } }, [
+              _vm._v("Blog")
+            ])
+          ],
+          1
+        ),
         _vm._v(" "),
         !_vm.loggedIn
-          ? _c("router-link", { attrs: { to: { name: "login" } } }, [
-              _vm._v("Log In")
-            ])
-          : _vm._e(),
+          ? _c(
+              "router-link",
+              { staticClass: "log-link", attrs: { to: { name: "login" } } },
+              [_vm._v("Log In")]
+            )
+          : _c(
+              "button",
+              { staticClass: "log-link", on: { click: _vm.logout } },
+              [_vm._v("Log Out")]
+            ),
         _vm._v(" "),
-        _vm.loggedIn
-          ? _c("button", { on: { click: _vm.logout } }, [_vm._v("Log Out")])
-          : _vm._e()
+        _c("div", {
+          class: { loading: _vm.loading },
+          attrs: { id: "loading-bar" }
+        })
       ],
       1
     ),
@@ -2644,84 +2679,125 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "article" }, [
-    _vm.loading
-      ? _c("div", { staticClass: "loading" }, [_vm._v("Loading")])
-      : _vm._e(),
-    _vm._v(" "),
-    _vm.error
-      ? _c("div", { staticClass: "error" }, [_vm._v(_vm._s(_vm.error))])
-      : _vm._e(),
-    _vm._v(" "),
-    _vm.loggedIn
-      ? _c("div", [
-          !_vm.editing
-            ? _c("button", { on: { click: _vm.toggleEdit } }, [_vm._v("Edit")])
-            : _vm._e(),
+    _c("div", { staticClass: "article-head" }, [
+      _c(
+        "div",
+        [
+          _c("router-link", { attrs: { to: { name: "home" } } }, [
+            _vm._v("Back to Articles")
+          ]),
           _vm._v(" "),
-          _vm.editing
-            ? _c("button", { on: { click: _vm.cancelEdit } }, [
-                _vm._v("Cancel")
-              ])
-            : _vm._e(),
-          _vm._v(" "),
-          _vm.editing
-            ? _c("button", { on: { click: _vm.saveEdit } }, [_vm._v("Save")])
-            : _vm._e(),
-          _vm._v(" "),
-          _vm.editing
-            ? _c("button", { on: { click: _vm.deleteArticle } }, [
-                _vm._v("Delete")
-              ])
+          _vm.error
+            ? _c("div", { staticClass: "error" }, [_vm._v(_vm._s(_vm.error))])
             : _vm._e()
-        ])
-      : _vm._e(),
-    _vm._v(" "),
-    !_vm.editing
-      ? _c("div", [
-          _c("h2", [_vm._v(_vm._s(_vm.article.title))]),
-          _vm._v(" "),
-          _c("article", {
-            domProps: { innerHTML: _vm._s(_vm.article.content) }
-          })
-        ])
-      : _c(
-          "div",
-          [
-            _c("input", {
-              directives: [
-                {
-                  name: "model",
-                  rawName: "v-model",
-                  value: _vm.article.title,
-                  expression: "article.title"
-                }
-              ],
-              attrs: { type: "text" },
-              domProps: { value: _vm.article.title },
-              on: {
-                input: function($event) {
-                  if ($event.target.composing) {
-                    return
-                  }
-                  _vm.$set(_vm.article, "title", $event.target.value)
-                }
-              }
-            }),
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _vm.loggedIn
+        ? _c("div", { staticClass: "article-controls" }, [
+            !_vm.editing
+              ? _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-primary",
+                    on: { click: _vm.toggleEdit }
+                  },
+                  [_vm._v("Edit")]
+                )
+              : _vm._e(),
             _vm._v(" "),
             _vm.editing
-              ? _c("wysiwyg", {
-                  model: {
-                    value: _vm.article.content,
-                    callback: function($$v) {
-                      _vm.$set(_vm.article, "content", $$v)
-                    },
-                    expression: "article.content"
-                  }
-                })
+              ? _c(
+                  "button",
+                  {
+                    staticClass: "btn cancel-btn",
+                    on: { click: _vm.cancelEdit }
+                  },
+                  [_vm._v("Cancel")]
+                )
+              : _vm._e(),
+            _vm._v(" "),
+            _vm.editing
+              ? _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-primary",
+                    on: { click: _vm.saveEdit }
+                  },
+                  [_vm._v("Save")]
+                )
+              : _vm._e(),
+            _vm._v(" "),
+            _vm.editing
+              ? _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-danger",
+                    on: { click: _vm.deleteArticle }
+                  },
+                  [_vm._v("Delete")]
+                )
               : _vm._e()
-          ],
-          1
-        )
+          ])
+        : _vm._e()
+    ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "article-main" }, [
+      !_vm.editing || !_vm.loggedIn
+        ? _c("div", [
+            _c("h2", [_vm._v(_vm._s(_vm.article.title))]),
+            _vm._v(" "),
+            _c("hr"),
+            _vm._v(" "),
+            _c("article", {
+              domProps: { innerHTML: _vm._s(_vm.article.content) }
+            })
+          ])
+        : _vm._e(),
+      _vm._v(" "),
+      _vm.editing && _vm.loggedIn
+        ? _c(
+            "div",
+            [
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.article.title,
+                    expression: "article.title"
+                  }
+                ],
+                staticClass: "form-control",
+                attrs: { type: "text", placeholder: "Title" },
+                domProps: { value: _vm.article.title },
+                on: {
+                  input: function($event) {
+                    if ($event.target.composing) {
+                      return
+                    }
+                    _vm.$set(_vm.article, "title", $event.target.value)
+                  }
+                }
+              }),
+              _vm._v(" "),
+              _vm.editing
+                ? _c("wysiwyg", {
+                    model: {
+                      value: _vm.article.content,
+                      callback: function($$v) {
+                        _vm.$set(_vm.article, "content", $$v)
+                      },
+                      expression: "article.content"
+                    }
+                  })
+                : _vm._e()
+            ],
+            1
+          )
+        : _vm._e()
+    ])
   ])
 }
 var staticRenderFns = []
@@ -2753,15 +2829,12 @@ var render = function() {
       _vm.loggedIn
         ? _c(
             "router-link",
-            { attrs: { to: { name: "articles.show", params: { id: "new" } } } },
+            {
+              staticClass: "btn btn-primary",
+              attrs: { to: { name: "articles.show", params: { id: "new" } } }
+            },
             [_vm._v("New Article")]
           )
-        : _vm._e(),
-      _vm._v(" "),
-      _c("p", [_vm._v("Article List")]),
-      _vm._v(" "),
-      _vm.loading
-        ? _c("div", { staticClass: "loading" }, [_vm._v("Loading")])
         : _vm._e(),
       _vm._v(" "),
       _vm.error
@@ -2770,34 +2843,31 @@ var render = function() {
       _vm._v(" "),
       _vm.articles
         ? _c(
-            "ul",
+            "div",
+            { staticClass: "article-list" },
             _vm._l(_vm.articles, function(article) {
               return _c(
-                "li",
-                { key: article._id, staticClass: "article-item" },
+                "router-link",
+                {
+                  key: article._id,
+                  staticClass: "article-link",
+                  attrs: {
+                    to: { name: "articles.show", params: { id: article._id } }
+                  }
+                },
                 [
-                  _c(
-                    "router-link",
-                    {
-                      attrs: {
-                        to: {
-                          name: "articles.show",
-                          params: { id: article._id }
-                        }
-                      }
-                    },
-                    [_vm._v(_vm._s(article.title))]
-                  ),
-                  _vm._v(" "),
-                  _c("div", {
-                    staticClass: "article-preview",
-                    domProps: { innerHTML: _vm._s(article.content) }
-                  })
-                ],
-                1
+                  _c("div", { staticClass: "article-card" }, [
+                    _c("h3", [_vm._v(_vm._s(article.title))]),
+                    _vm._v(" "),
+                    _c("div", {
+                      staticClass: "article-preview",
+                      domProps: { innerHTML: _vm._s(article.content) }
+                    })
+                  ])
+                ]
               )
             }),
-            0
+            1
           )
         : _vm._e()
     ],
@@ -18980,11 +19050,15 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vuex__WEBPACK_IMPORTED_MODULE_1__
 /* harmony default export */ __webpack_exports__["default"] = (new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
   strict: true,
   state: {
-    loggedIn: false
+    loggedIn: false,
+    loading: false
   },
   mutations: {
     setLoggedIn: function setLoggedIn(state, data) {
       state.loggedIn = data;
+    },
+    setLoading: function setLoading(state, data) {
+      state.loading = data;
     }
   }
 }));

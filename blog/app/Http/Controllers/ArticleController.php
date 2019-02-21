@@ -39,10 +39,14 @@ class ArticleController extends Controller
      */
     public function store(Request $request)
     {
-        $inputArticle = $request->input('article');
+        $request->validate([
+            'article.title' => 'required',
+            'article.content' => 'required',
+        ]);
+
         $article = new Article;
-        $article->title = $inputArticle['title'];
-        $article->content = $inputArticle['content'];
+        $article->title = $request->input('title');
+        $article->content = $request->input('content');
         $article->save();
 
         return response()->json([
@@ -83,9 +87,17 @@ class ArticleController extends Controller
      */
     public function update(Request $request, Article $article)
     {
-        $inputArticle = $request->input('article');
-        $article->title = $inputArticle['title'];
-        $article->content = $inputArticle['content'];
+        $request->validate([
+            'title' => 'required',
+            'content' => 'required',
+        ],
+        [
+            'title.required' => 'A title is needed',
+            'content.required' => 'You should write some content!'
+        ]);
+
+        $article->title = $request->input('title');
+        $article->content = $request->input('content');
         $article->save();
 
         return response()->json([
